@@ -1,0 +1,17 @@
+[Unit]
+Description=Kerberos Credential Cache Manager Daemon for OpenLDAP Server
+After=network.target
+Before=slapd.service
+
+
+[Service]
+Type=forking
+PIDFile=/var/run/openldap/slapd-k5start.pid
+User=ldap
+Group=ldap
+Environment="KRB5_KTNAME=/etc/openldap/ldap.keytab" "KRB5RENEW=60" "KRB5PRINCIPAL=-U"
+EnvironmentFile=/etc/sysconfig/slapd
+ExecStart=/usr/bin/k5start -q -f ${KRB5_KTNAME} -FP -K ${KRB5RENEW} -b -p /var/run/openldap/slapd-k5start.pid -L ${KRB5PRINCIPAL}
+
+[Install]
+WantedBy=multi-user.target
